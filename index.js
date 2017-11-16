@@ -30,6 +30,28 @@ const prefix = "!";
 var playing = 0;
 var servers = {};
 
+const answers = [ "It is certain.",
+                  "It is decidedly so.",
+                  "Without a doubt.",
+                  "Yes definitely.",
+                  "You may rely on it.",
+                  "As I see it, yes.",
+                  "Most likely.",
+                  "Outlokk good.",
+                  "Yes.",
+                  "Signs point to yes.",
+                  "Reply hazy try again.",
+                  "Ask again later.",
+                  "Better not tell you now.",
+                  "Cannot predict now.",
+                  "Concentrate and ask again.",
+                  "Don't count on it.",
+                  "My reply is no.",
+                  "My sources say no.",
+                  "Outlook not so good.",
+                  "Very doubtful."];
+
+
 function play(connection, message)
 {
   var server = servers[message.guild.id];
@@ -43,8 +65,8 @@ function play(connection, message)
     let duration = new Date(null);
     duration.setSeconds(info.length_seconds);
     console.log(duration.toISOString().substr(14,8));
-    duration = duration.toISOString().substr(14,6)
-    message.channel.send(`:musical_score **${info.title}** [${duration}]`)
+    duration = duration.toISOString().substr(14,5)
+    message.channel.send(`:headphones: **${info.title}** [${duration}]`)
   });
 
   server.queue.shift();
@@ -57,7 +79,7 @@ function play(connection, message)
 }
 
 bot.on('ready', () => {
-  console.log(`Logged in as ${bot.user.username}!`);
+  console.log(`${bot.user.username}, ready to go ma'am!`);
 });
 
 bot.on('guildMemberAdd', member => {
@@ -69,11 +91,12 @@ bot.on('guildMemberAdd', member => {
 bot.on('message', (message) => {
   if (message.author.bot) return;
 
-  if(!message.content.startsWith(prefix)) message.reply("handyBot cannot understand :scream:!");;
+  if(!message.content.startsWith(prefix)) return;
 
   const receivedMsg = message.content.split(" ");
+
   let command = receivedMsg[0].slice(prefix.length).toLowerCase();
-  const params = receivedMsg.slice(prefix.length);
+  let params = receivedMsg.slice(prefix.length);
 
   switch(command) {
     case "ping":
@@ -137,12 +160,18 @@ bot.on('message', (message) => {
       .catch(console.error); //must be at least one.. and deletes n - 1
       break;
 
+    case "8ball":
+      let index = Math.floor(Math.random() * answers.length);
+      message.channel.send(":8ball: " + answers[index])
+      break;
+
     case "test":
+      //magic8ball
 
       break;
 
     default:
-      message.reply("handyBot cannot understand :scream:!");
+      message.channel.send("handyBot cannot understand! :scream:");
   }
 });
 
